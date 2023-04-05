@@ -1,0 +1,23 @@
+
+{
+  "params":
+  {
+    "local_server":"True",
+    "local_uri": "mysql+pymysql://root:root@localhost/codingthunder",
+    "prod_uri":"mysql://root:@localhost/codingthunder",
+    "fb_url":"https://www.facebook.com/profile.php?id=100009510345970",
+    "tw_url":"https://twitter.com/codingthunder",
+    "gh_url": "https://github.com/codingthunder",
+    "blog_name": "Coding Thunder",
+    "tag_line": "Starting platform of Programmers",
+    "gmail-user":"shivamraiias@gmail.com",
+    "gmail-password":"veffhsbzoxunwadw",
+    "about_text": " Hello everyone , To connect with mySQL database i have searched my own way from google  , welcome to the website which is friend of all coders providing the coding related blog on this platform and i always tried to get the things faster and I am a good boy  :  this is link of the updated local url  : mysql+pymysql://root:root@localhost/codingthunder  , with username and password as root",
+    "no_of_posts": 3,
+    "login_image":"login.svg",
+    "admin_user":"shivam",
+    "admin_password": "shivam",
+    "file_upload_location": "C:\\Users\\ASUS\\PycharmProjects\\Flask_Blog_App_Hry\\static\\img"
+  }
+
+}

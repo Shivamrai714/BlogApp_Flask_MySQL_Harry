@@ -1,0 +1,382 @@
+*While runnig it given error for cryptography.
+
+So i deleted the previous virtual envrronment and created new Virtaul ENv
+-Also pip install flask , flask_sqlalchemy , flask_mail , pip install cryptography
+
+To run this project . Just extact the zip file and copy all the folders . And crate a new project in pycharm. And open it in file explorer  and paste them . Now correct the local url with password of your mysql and then Just run then main.py file. given by harray.
+
+CREATE NEW FLASK PROJECT ON PYCHAM IDE:::::::::
+Python - Flask Tutorial Blog apll  : DONE ON PYCHARM IDE ::::::::::::   /// TO run the flask app ::::;; python app.py runserver   // All needed imports in new virtaul :  pip install flask ,  pip install flask-sqlalchemy  ,
+
+1.Installed IDE PyCharm
+2.Install flask from powershell.     pip install flask                / Or using Pycharm then write import flask , it will give suggestion to install flask.
+3.Write the code for flask from the their website. and run it using app.run()
+
+ from flask import  Flask
+app=Flask(__name__)
+
+@app.route("/")                   #this is the end point created
+def hello():
+    return "Hello World"
+
+app.run(debug=True)
+
+4. We can create the static(public to users) folder and template(private) folder like this.
+
+5. Now we need to download the template of the BLOG app from  start- bootstrap file.(Google)
+
+  Now extact the blog template in a folder.
+  Now copy all the .html files in our project's template Folder.
+  Now go to index.html code and just add the jinja url to all the link tags (ie css , js files present in static folder)
+ 
+ **Dont modify the href, src with have links of "https": as they are fetched from internet.
+
+  Replace the href , scr attributes with the jurl  ie like this.
+   
+   --To add jurl in src=""  , href=""  
+     href="{{ url_for('static', filename='assets/favicon.ico') }}"
+   
+   --To add jurl in arguments of url()
+   <header class="masthead" style="background-image: url('       {{ url_for('static', filename='assets/img/home-bg.jpg') }}            ')">
+
+  Also to load the images from static/assests folder , use the jinja for url
+
+
+6.Now to make the link of buttons active , / correct the href , with out endpoint made in main.py file.
+7. Now we need to use the concept of template inheritance . 
+  That same concept we will apply to other pages as well, so designing the layout.html file and simple inheriting it to other pages.
+
+--.Now we will correect the Header , Footer , navigatation bar from the layout file . And  extends this layout file everywhere in other pages like about, post , index, etc using jinja extends and jinja block 
+  Correct the images url of all pages. from the same method.  
+
+8. Now connecting with the database.
+   Here he has been working with php my admin and created two table 
+
+   But i have used MySql workbench , created database codingthunder and made tables with same structure .  posts and contacts
+   
+NOW TO Attach DataBase with the Flask- Python App , we need to use MySQLAlchemy. Refer google for documentation and usage
+
+9. Open powershell first and intall flask sqlalchemy - needed to connect the database and perform CRUD operation with DB
+   
+->    pip install flask-sqlalchemy
+ 
+
+   Now attaching the Contact.html page , and binding it with database.
+
+-> Write the command to connect with sql database (google it) and provide username and password in it.
+   Search SQLAlchecmy database uri.
+   
+   from flask_sqlalchemy import SQLAlchemy
+
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/codingthunder'
+    db=SQLAlchemy(app)
+   
+(In my case this doesnt work . So i have done "pip install pymysql" and then used the link  )
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/codingthunder'
+
+-> open the main.py app and write the code above to connect with db. Make sure to  Import the flask_sqlalchemy froim SQLAlchemy .
+-> Also we need to create the Class , here , which takes the same properties as we made tables in database MySQL WorkBench
+ 
+   And make the contact.html form field connection , using name attribute in them.
+   now here , just fetch all the input data , 
+
+
+class Contacts(db.Model):
+    sno = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    phone_num = db.Column(db.String(12), nullable=False)
+    msg = db.Column(db.String(220), nullable=False)
+    date = db.Column(db.String(12), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+
+
+
+--> Now we need to make post request to submit the data of the form field with name attributes.
+  So go to Contact end point and fetch the data from the form.
+  Also add condition to fetch the data using request if method is post.
+
+Now fetching the values from form using request.form.get('name') , and creating the object of Contacts class ,and saving it in db and comminting. refer code below
+
+
+
+_______________
+10.  Now we are going to make the congfiguration file. To set the parameters. Make config. file.
+    -Now need to import this file in app.py.
+
+Make config.json file.
+    -Put data in it. We can add link of contants like facebook , intsa
+
+
+{
+
+  "params":
+  {
+    "local_server": "True",
+    "local_uri": "mysql+pymysql://root:root@localhost/codingthunder",            #need to mention your username and password.
+    "prod_uri": "mysql+pymysql://root:root@localhost/codingthunder",
+
+     "fb_url": "https://www.facebook.com/profile.php?id=100009510345970",
+      "tw_url": "https://www.facebook.com/profile.php?id=100009510345970",
+      "gh_url": "https://www.facebook.com/profile.php?id=100009510345970"
+
+  }
+
+
+}
+
+
+
+Origianl code :
+app=Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/codingthunder'
+db = SQLAlchemy(app)
+
+
+Is changed to constants used in config.json file
+
+
+____________________________
+
+import json
+
+
+
+with open('config.json','r') as c:
+    params=json.load(c)["params"]
+
+local_server=True
+app=Flask(__name__)
+if(local_server):
+    app.config['SQLALCHEMY_DATABASE_URI'] = params['local_uri']
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = params['prod_uri']
+
+
+db = SQLAlchemy(app)
+
+____________
+
+
+- We can also attach the links of the within the config.json. And can use them by passing parama=params in the arguments of the return template of  end points used in app.py
+  like this
+
+  
+@app.route("/")
+def home():
+    return render_template('index.html',params=params)
+  
+-Now we can fetcth this from html pages using jinja template.
+
+target="_blank"  :  attribute open link in new tab.
+
+
+
+____________
+(Will continue later.)
+
+
+11. Sending the mail in the 
+
+-install the flask mail in powershell using pip command.
+ pip install flask-mail
+
+-import Mail at top of main.py file.
+-Also provide the parameter in app.config.update( .....  )
+-We are usgin Gmail SMTP server to send the mail. 
+-Also add the gmail id and password in the config.json file and user them here .
+
+(We are not doing allow less secure app to send email to us .)
+
+
+
+__________________________
+
+12. Now we are going to define the end point for the post .
+ Also adding a slug filed in the database to show the strring in url.
+
+Now make the end point in main.py . ALso pass the string:post_slug in the def post_route(post_slug) function 
+
+
+- Now make a Post Class in the main.py to handle the post. sno, title,slug ,  content , data etc 
+- THen fetch the posts and filer them. And pass the post in render() to show it in html file.
+
+
+-Also make url call   127:0.0.1/post/first-post   to see changes.
+
+---TO add the image to the post 
+-Now make another field in the post table. img_file. Also add image name in database.
+
+ And show background-image from there using 
+-create the varriable of img_file  in Post Class also , in main.py file.
+-Bacially here we have defined the url  inside url , so need to define file name outside in jinja block and give its reference inside.0 
+like this.
+
+{% set fname = 'img/' + post.img_file %}
+    <header class="masthead" style="background-image: url('{{ url_for('static', filename=fname) }}')">
+
+
+
+
+
+____________________
+
+
+13 . Desingning the Blog Home page to show the posts.
+
+- Now use the jinja for loop to show the posts fetched from the database.
+-Now we are going to show the banners of posts available with the database.
+
+-Also add tagline field in the database in posts Table, also add in Class posts in main.py.
+-Now feed some data in table , to show content on the page.
+-Now fetch the posts from the database (using Posts.query.filter_by().all() ) and pass them in the render function to show in html file.
+-We can decide , to show banners of how many posts to be show , by using slicing in fetching them in filter function.
+
+
+________________
+
+14. Creating the Admin Module. To add authentication.
+
+-Make sure u create the config.json file.
+-Now get the login.html file (Sign in template of Bootstap), page from the Bootstrap . 
+
+-Make sure to attach the Starter cdn  ie bootstap css , and js file . WHen you are copying the template of signin page. Also get the inbuit css file by clicking on View page source of signin template, then saving that sign-in file in our static folder css as signin .css file .
+-Then in out login.html , give the jinja url for : for loading the file in html page..
+-NOw add the action and method type in login.html signin form.
+Need to set the secreret key in flask app to make login page work
+
+
+
+-MAKE sure rule of jinja is followedd , we cannot {{}} inside the jinja url for.
+
+
+-Make a login.html and also make a endpoint for it, ie define function with  name dashboard. and show the login.html page here with params object passed to it (To access the contansts defined in .config to use then {{params['no_of_pages']}} in html pages)
+
+-Also no need to extend the layout page here.
+-Just take the css file also and attach it (using jinja url_for {{  ... }}) here to make the login box to center.
+-just copy the html and css file  from login template of bootstrap 
+
+
+-For Logout refer to Video 17 . 11:49
+
+-Now to show the icon on above the login page, we have download it and saved it in static folder. Now just use  the jinja url for to show the image. Also define the imagename expplicatily (as we cant users {{params0}} inside the jinja for url   )
+
+-Add the image_file icon in the config.file
+-Now in config file. Also add the admin user and admin password.
+-Now make the html page , add the form attributes, action , method.
+
+________________
+15. Setting up the User Admin Page post page.
+
+
+-Open the dashboard page , and set up the methods forr the / end point for the dashboard page.
+-Forr changing image of background we can just add that image in static folder , then serve it here using. jinja url
+-We are using the table to show all post of particular user to the user. ()
+
+______________________
+16.Editing exitsing post.
+
+-give the end point in the Edit button using href="/edit/<string:sno>"
+
+-make the route for the editing.
+-Check user is logged In / user is active. 
+-Make a edit .html . And copy back the page to Add the post . And make a contact-form to edit form.
+-Fetch the data from the form submission , in post request.(MAke surerrr to  give the name filed in the forrm. )
+using "request5t.forrm.get("contnetx")"
+
+Write condition for new post or editing thge post.
+If serial no = 0 , make the new post  object.
+Add return statement  to render the edit.html  page. and give the paramas field here  , they are used in layout file
+Now define the action="edit/sno" of form , and method = post
+
+If the request to end point is with  sno/0  then we will make the new post.
+Ohterwise we just need to update the field. 
+Just  commint them 
+-We are going to update the post with required variable. then we commit and then we redirrect to edit/sno  end point. And now it will be from get request so all the details of post will be shown and normal get page is displayed :  logout,edit ,buttons.
+And redirect the user to the /edit/sno
+
+-WE are going to just pass the post object , when we have get call to show the post of the users.
+-Serial No and date are not editable.
+
+-
+-------------------
+
+17.Uploading a file.
+
+- Just create a add file input tag in the html page of post dashboard.html and then also add submit button to it. 
+now we need to create the end point .
+
+-add a varible in param. in config file . uplload location="path" Take  the path of the static folder and while pasting path in the project , just change the \ toi \\ , as we need to escape it (so compiler understand that it is a \ actually .)
+-Now make the uploaded end point , check user is logged in or Not.
+-Also we have take the UPLOAD_FOLDER as the local var (which take the reference from the config varaible.)
+-In endpoint ,we have taken both get and post request.  If post request comes the we just use the os.path.join to attach the file . And use secure_filename(f.filename) to upload the file to folder specfiied in the path.
+-Also in html file , input tag add thge enctype as "multipart/form-data"
+
+-Make Logout function , as endpint and kill the session using pop method and redirect to the dashboard.
+
+______________________________
+18.
+Deleting button in posts  dashboard . Add href="/delete/{{post.sno}}"
+Make end point for delete . Define the @app_route for it . Then chech the logged in user. Now 
+-Use the  filter_by function(sno=sno).first 
+-Now session.deltee(post)
+-Session commit.
+
+The redirect to the dashboard page.
+
+\
+_________________________
+19. Creating  pagenation . 
+
+-Go to the home method 
+ 
+-First check is page  is numeric or not , if not just show the 0 page.
+-Else go with the pagenation logics of first page, current page , last page.
+-first of all we need to get the lenght of posts using filter._by.all() method, Then find the last page =  len / no_of_post to be shown in single page.
+
+-Refer video (to implement the pagenation.)
+
+__________
+
+20. Uploading Blog App to the Github :
+
+
+
+Fixing bugg with post  :: Learn to clone project with the GITHJUB
+
+This is to understand this occsaioon of the last video and then .
+
+-
+In case we want to show the alret message we can use the jinja block . To flash the messages.
+
+use {%% with messages = get_flashed_ message(with categories = true) }}
+
+And we can pass the messages from the flash()  from our home function.
+
+Hence we can flash the messages here. with passing the color (danger etc )as well as passing the contnet. here.
+eg 
+flask("Form submiteed " , success ); 
+
+
+
+
+
+EXTRA :::: 
+Vs code : How to Run the todo List Project.
+
+
+1 . Drag drop to vs code.
+2. Terminal open
+3. Python extension install it.
+   CTRL + Shift  + P (Command pallent )
+   Searrch python create environment venv
+  Open new command pallet and open new terminal
+4 Install flask :  python -m pip install flask
+5.For database instance working :   pip install flask-sqlalchemy
+6.Start project       : flask run
+7.Open the link with Ctrl + click to view in browser.
+
+
+
+-
+
